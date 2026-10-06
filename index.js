@@ -1,75 +1,19 @@
-import { Sequelize, Model, DataTypes } from "sequelize";
 import express from "express";
+import { env } from "./utils/config.js";
+import { connectToDatabase } from "./utils/db.js";
+import blogsRouter from "./controllers/blogs.js";
 
 const app = express();
 
 app.use(express.json());
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
-});
+app.use("/api/blogs", blogsRouter);
 
-class Blog extends Model {}
-Blog.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    author: {
-      type: DataTypes.TEXT,
-    },
-    url: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    title: {
-      type: DataTypes.TEXT,
-      allowNull: false,
-    },
-    likes: {
-      type: DataTypes.INTEGER,
-    },
-  },
-  {
-    sequelize,
-    underscored: true,
-    timestamps: false,
-    modelName: "blog",
-  },
-);
-
-app.get("/api/blogs", async (req, res) => {
-  const blogs = await Blog.findAll();
-
-  res.json(blogs);
-});
-
-app.post("/api/blogs", async (req, res) => {
-  const blog = await Blog.create(req.body);
-
-  res.json(blog);
-});
-
-app.delete("/api/blogs/:id", async (req, res) => {
-  const id = req.params.id;
-  await Blog.destroy({
-    where: {
-      id: id,
-    },
+async function startServer() {
+  await connectToDatabase();
+  app.listen(env.PORT, () => {
+    console.log(`Server running on http://localhost:${env.PORT}`);
   });
+}
 
-  res.status(204).end();
-});
-
-const PORT = process.env.PORT || 8000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+startServer();
