@@ -15,8 +15,11 @@
   },
   "type": "module",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dev": "node --watch --env-file-if-exists=.env index.js"
+  },
   "dependencies": {
+    "express": "^5.2.1",
     "pg": "^8.23.1",
     "sequelize": "^6.37.8"
   }
