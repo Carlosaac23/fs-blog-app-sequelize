@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
   res.json(blogs);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const { title, author, url, likes } = req.body;
 
   try {
@@ -31,6 +31,7 @@ router.post("/", async (req, res) => {
     res.status(201).json(newBlog);
   } catch (error) {
     res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -38,7 +39,7 @@ router.get("/:id", blogFinder, (req, res) => {
   res.json(req.blog);
 });
 
-router.put("/:id", blogFinder, async (req, res) => {
+router.put("/:id", blogFinder, async (req, res, next) => {
   const { title, author, url, likes } = req.body;
 
   try {
@@ -47,6 +48,7 @@ router.put("/:id", blogFinder, async (req, res) => {
     res.json(req.blog);
   } catch (error) {
     res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
