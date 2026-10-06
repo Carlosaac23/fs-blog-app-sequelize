@@ -57,6 +57,6 @@ router.delete("/:id", blogFinder, async (req, res) => {
   res.status(204).end();
 });
 
-app.use(errorHandler);
+router.use(errorHandler);
 
 export default router;
